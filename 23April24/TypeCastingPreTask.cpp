@@ -4,9 +4,12 @@
  */
 
 #include <iostream> // contains cout, cin
-using namespace std; // so we dont have to keep doing std::cout, std::cin
+using namespace std; // so we don't have to keep doing std::cout, std::cin
 
-bool ImplicitConversion(); bool AssignmentConversion(); void printDivider();
+bool ImplicitConversion(); bool AssignmentConversion(); 
+bool ConstantConversion(); bool ReinterpretCast();
+void printDivider();
+int ModifyStuff(int); int ModifyStuff(int*); 
 
 int main()
 {
@@ -14,6 +17,10 @@ int main()
 	ImplicitConversion(); // Implicit convertsion
 	printDivider();
 	AssignmentConversion(); // First Explicit conversion
+	printDivider();
+	ConstantConversion(); // Second Explicit Conversion, make a non-constant member constant
+	printDivider();
+	ReinterpretCast();
 	printDivider();
 
 	return 0;
@@ -71,3 +78,76 @@ bool AssignmentConversion()
 
 	return true;
 }
+
+/**
+ * @brief Explicitly converts from constant to non-constant 
+ * @returns false if error
+*/
+bool ConstantConversion()
+{
+	int a = 4;
+	const int b = 5;
+	const int* c = &a;
+
+	// this is example code that shows what happens if you don't use const conversion
+#	ifdef THIS_CODE_WONT_WORK
+		ModifyStuff(c); // This won't work because the modify stuff function is expecting a constant pointer not a pointer
+#	endif
+
+	// correctly working code
+	ModifyStuff(
+		const_cast 	// calling constant cast operation
+		<int*>  	// expected output data type
+		(c) 		// the input value to modify
+		);
+	// in a single line
+	cout << "The constant pointer's value was converted to: " << ModifyStuff(const_cast <int*> (c)) << endl;
+
+#	ifdef THIS_CODE_WONT_WORK
+		// This code will run but it is a runtime error, as it will cause undefined behavior
+		ModifyStuff(
+			const_cast <int> (b); // the problem here is, that we are DIRECTLY trying to modify b, which is a constant value
+		)
+#	endif
+
+	return true;
+}
+
+/**
+ * @brief Dereferences the pointer and adds one to it
+ * @returns The new value
+*/
+int ModifyStuff(int* NonConstantPointer)
+{
+	return *NonConstantPointer = *NonConstantPointer + 1; 	// Note how we do not edit the pointer, but rather only READ it
+															// We will edit the value NonConstantPointer is pointing to
+}
+
+/**
+ * @brief Takes the reference of an object and adds one to it
+ * @returns The new value
+*/
+int ModifyStuff(int& NonConstantValue)
+{
+	return NonConstantValue + 1;
+}
+
+/**
+ * @brief Uses the reinterpret operator and adds one to it
+ * @returns false if error
+*/
+bool ReinterpretCast()
+{
+	// this directly converts the value between each other
+	// Note: VERY dangerous, and should be used sparingly
+	long *ptr = new long(97);
+	int *ch = reinterpret_cast<int*>(ptr);
+
+	cout << "ptr: \t" 	<< ptr 	<< endl;
+	cout << "ch: \t" 	<< ch 	<< endl;
+	cout << "*ptr: \t" 	<< *ptr	<< endl;
+	cout << "*ch: \t"	<< *ch 	<< endl;
+
+	delete ptr; // always remember to free your memory 
+}
+

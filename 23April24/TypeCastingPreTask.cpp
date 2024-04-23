@@ -20,7 +20,8 @@ int main()
 	printDivider();
 	ConstantConversion(); // Second Explicit Conversion, make a non-constant member constant
 	printDivider();
-	ReinterpretCast();
+    // i don't know what's wrong with this
+	//  ReinterpretCast();
 	printDivider();
 
 	return 0;

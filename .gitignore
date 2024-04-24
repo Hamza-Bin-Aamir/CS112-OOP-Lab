@@ -33,6 +33,7 @@
 
 # VS Code files
 /.vscode
+/build
 
 # Clion files
 /cmake-build-debug

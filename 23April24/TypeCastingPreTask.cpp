@@ -8,6 +8,7 @@ using namespace std; // so we don't have to keep doing std::cout, std::cin
 
 bool ImplicitConversion(); bool AssignmentConversion(); 
 bool ConstantConversion(); bool ReinterpretCast();
+bool StaticCast(); bool DynamicCast();
 void printDivider();
 int ModifyStuff(int); int ModifyStuff(int*); 
 
@@ -19,10 +20,13 @@ int main()
 	AssignmentConversion(); // First Explicit conversion
 	printDivider();
 	ConstantConversion(); // Second Explicit Conversion, make a non-constant member constant
-	printDivider();
+	//printDivider();
     // i don't know what's wrong with this
-	//  ReinterpretCast();
+	//ReinterpretCast();
 	printDivider();
+	StaticCast();
+	printDivider();
+	DynamicCast();
 
 	return 0;
 }
@@ -70,11 +74,11 @@ bool AssignmentConversion()
 	cout << c << endl;
 
 	cout << "However, if you specify the explicit conversion using assignment operator, you will get the answer: ";
-	c = (float)a/b;
+	c = float(a)/b; // note that (datatype)value is the same as datatype(value) but dt(v) will be guaranteed to call the constructor
 	cout << c << endl;
 
 	cout << "This even works if you first do an explicit conversion, then an implicit conversion: ";
-	c = (double)a/b; // Note that 'c' is still a float here!
+	c = double(a)/b; // Note that 'c' is still a float here!
 	cout << c << endl;
 
 	return true;
@@ -152,3 +156,12 @@ bool ReinterpretCast()
 	delete ptr; // always remember to free your memory 
 }
 
+/**
+ * @brief Explicitly converts the values
+ * @returns false if error
+*/
+bool StaticCast()
+{
+	size_t a = static_cast<size_t>(3.14159264f);
+	cout << "3.14159264f statically converted from float to an unsigned integer: " << a;
+}
